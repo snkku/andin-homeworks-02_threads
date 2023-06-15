@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">NMedia</string>
+    <string name="user_avatar">User Avatar</string>
+    <string name="menu_button">Menu button</string>
+    <string name="likes_count">Likes count</string>
+    <string name="share_button">Share button</string>
+    <string name="views_count">Views count</string>
 </resources>

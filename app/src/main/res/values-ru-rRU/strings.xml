@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">НМедиа</string>
+    <string name="user_avatar">Аватар пользователя</string>
+    <string name="menu_button">Кнопка меню</string>
+    <string name="likes_count">Количество лайков</string>
+    <string name="share_button">Кнопка поделиться</string>
+    <string name="views_count">Количество просмотров</string>
 </resources>
