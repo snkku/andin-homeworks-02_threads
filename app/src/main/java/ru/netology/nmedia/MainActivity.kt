@@ -4,16 +4,17 @@ import android.content.ContentValues.TAG
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.widget.ImageButton
 import ru.netology.nmedia.databinding.ActivityMainBinding
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.utils.Shorter
+
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        var binding: ActivityMainBinding = ActivityMainBinding.inflate(layoutInflater)
+        val binding: ActivityMainBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        val shorter = Shorter()
 
         val post = Post(
             id = 1,
@@ -27,10 +28,12 @@ class MainActivity : AppCompatActivity() {
             author.text = post.author
             published.text = post.published
             content.text = post.content
+            viewedCountText.text = shorter.short(post.viewed.toDouble())
             if (post.likedByMe)
                 imLikes.setImageResource(R.drawable.image_liked)
 
-            likesCountText.text = post.likes.toString()
+            likesCountText.text = shorter.short(post.likes.toDouble())
+            shareCountText.text = shorter.short(post.shared.toDouble())
 
             root.setOnClickListener {
                 Log.d(TAG, "onCreate: Root clicked")
@@ -47,7 +50,12 @@ class MainActivity : AppCompatActivity() {
                     if (post.likedByMe) R.drawable.image_liked else R.drawable.image_like
                 )
                 if (post.likedByMe) post.likes++ else post.likes--
-                likesCountText.text = post.likes.toString()
+                likesCountText.text = shorter.short(post.likes.toDouble())
+            }
+            imShare.setOnClickListener {
+                Log.d(TAG, "Share button pressed")
+                post.shared ++
+                shareCountText.text = shorter.short(post.shared.toDouble())
             }
         }
     }
