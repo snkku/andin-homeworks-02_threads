@@ -5,4 +5,10 @@
     <string name="likes_count">Likes count</string>
     <string name="share_button">Share button</string>
     <string name="views_count">Views count</string>
+    <string name="post_text">Post text here</string>
+    <string name="description_post_like">Add/Change</string>
+    <string name="editing">Editing</string>
+    <string name="menu_edit">Edit</string>
+    <string name="menu_remove">Remove</string>
+    <string name="error_empty_content">Empty post text</string>
 </resources>

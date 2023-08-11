@@ -6,4 +6,10 @@
     <string name="likes_count">Количество лайков</string>
     <string name="share_button">Кнопка поделиться</string>
     <string name="views_count">Количество просмотров</string>
+    <string name="post_text">Текст сообщения</string>
+    <string name="description_post_like">Добавить/Изменить</string>
+    <string name="editing">Редактирование</string>
+    <string name="menu_edit">Изменить</string>
+    <string name="menu_remove">Удалить</string>
+    <string name="error_empty_content">Текст поста пустой</string>
 </resources>
