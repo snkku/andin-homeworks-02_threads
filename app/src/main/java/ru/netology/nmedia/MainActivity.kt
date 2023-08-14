@@ -1,7 +1,6 @@
 package ru.netology.nmedia
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -13,7 +12,6 @@ import ru.netology.nmedia.adapter.PostAdapter
 import ru.netology.nmedia.adapter.onInteractionListener
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.utils.AndroidUtils
-import kotlin.math.log
 
 
 class MainActivity : AppCompatActivity() {
@@ -82,6 +80,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.cancelButton.setOnClickListener {
             binding.content.setText("")
+            viewModel.clearEdited()
             AndroidUtils.hideKeyboard(binding.root)
             binding.vgEdit.visibility = View.GONE
 
