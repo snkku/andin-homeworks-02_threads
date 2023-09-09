@@ -3,4 +3,6 @@
     <dimen name="standard_padding">16dp</dimen>
     <dimen name="avatar_size">36dp</dimen>
     <dimen name="icon_text_padding">5dp</dimen>
+    <dimen name="std_icon_size">24dp</dimen>
+    <dimen name="std_btn_text_size">6pt</dimen>
 </resources>

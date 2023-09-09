@@ -43,12 +43,11 @@ class PostViewHolder(
             content.text = post.content
             viewedCountText.text = shorter.short(post.viewed.toDouble())
 
-            likesCountText.text = shorter.short(post.likes.toDouble())
-            shareCountText.text = shorter.short(post.shared.toDouble())
-
-            imLikes.setImageResource(if (post.likedByMe) R.drawable.image_liked else R.drawable.image_like)
-            likesCountText.text = shorter.short(post.likes.toDouble())
-            shareCountText.text = shorter.short(post.shared.toDouble())
+            imLikes.text = shorter.short(post.likes.toDouble())
+            imShare.text = shorter.short(post.shared.toDouble())
+            imLikes.isChecked = post.likedByMe
+            imLikes.text = shorter.short(post.likes.toDouble())
+            imShare.text = shorter.short(post.shared.toDouble())
 
             imLikes.setOnClickListener {
                 onInteractionListener.onLike(post)
