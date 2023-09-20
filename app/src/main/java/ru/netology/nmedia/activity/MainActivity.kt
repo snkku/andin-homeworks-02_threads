@@ -30,7 +30,6 @@ class MainActivity : AppCompatActivity() {
             viewModel.save(text)
         }
 
-
         val interaction = object : onInteractionListener {
             override fun onShare(post: Post) {
                 val intent = Intent().apply {
@@ -52,14 +51,8 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onEdit(post: Post) {
-//                binding.editTextPreview.text = post.content
-//                binding.vgEdit.visibility = View.VISIBLE
-//                with(binding.content) {
-//                    setText(post.content)
-//                    AndroidUtils.showKeyboard(binding.root)
-//                    requestFocus()
-//                }
-//                viewModel.edit(post)
+                viewModel.edit(post)
+                newPostLauncher.launch(post.content)
             }
 
         }
@@ -79,7 +72,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.add.setOnClickListener {
-            newPostLauncher.launch()
+            newPostLauncher.launch(null)
         }
 
 //        binding.content.doOnTextChanged { text, start, before, count ->
