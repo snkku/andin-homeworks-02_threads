@@ -1,5 +1,6 @@
 package ru.netology.nmedia.repository
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import ru.netology.nmedia.dto.Post
@@ -135,9 +136,10 @@ class PostRepositoryInMemory : PostRepository {
             listOf(post.copy(id = nextId++)) + posts
         } else {
             posts.map {
-                if (it.id == post.id) post.copy(content = post.content) else it
+                if (it.id == post.id) post.copy() else it
             }
         }
         data.value = posts
+        Log.d("POSTS", posts.toString())
     }
 }

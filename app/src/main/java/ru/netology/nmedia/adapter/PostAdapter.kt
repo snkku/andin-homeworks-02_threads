@@ -1,16 +1,25 @@
 package ru.netology.nmedia.adapter
 
+import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.PopupMenu
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.annotation.GlideModule
+import com.bumptech.glide.module.AppGlideModule
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.PostCardBinding
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.utils.Shorter
 
+@GlideModule
+class GlideApp : AppGlideModule()
 interface onInteractionListener {
     fun onLike(post: Post) {}
     fun onRemove(post: Post) {}
@@ -31,6 +40,7 @@ class PostAdapter(private val onInteractionListener: onInteractionListener) :
     }
 }
 
+
 class PostViewHolder(
     private val binding: PostCardBinding,
     private val onInteractionListener: onInteractionListener
@@ -48,7 +58,31 @@ class PostViewHolder(
             imLikes.isChecked = post.likedByMe
             imLikes.text = shorter.short(post.likes.toDouble())
             imShare.text = shorter.short(post.shared.toDouble())
-
+            //https://www.youtube.com/watch?v=DCRojLC8xWM
+            if (!post.videoURL.isNullOrBlank())
+            {
+                val id = Regex("\\.*\\?v=([\\w\\-]+)(\\S+)?\$").findAll(post.videoURL).map { it.groupValues[1] }.joinToString()
+                try {
+                    val image = Glide.with(binding.root)
+                        .asBitmap()
+                        .load(String.format("https://img.youtube.com/vi/%s/0.jpg", id))
+                        .into(videoPreviewImage)
+                    Log.d("IMG", image.toString())
+/*
+                    image.getSize { width, height ->
+                        with(videoPreviewImage){
+                            layoutParams.width = width
+                            layoutParams.height = height
+                        }
+                    }
+  */
+                } catch (e: Exception) {
+                    Log.d("IMAGE", "Image get error: " + e.printStackTrace())
+                }
+                Log.d("POST ADAPTER, videoId: ", id)
+//                videoPreviewContent.visibility = View.VISIBLE
+            }
+//https://img.youtube.com/vi/<id>>/0.jpg
             imLikes.setOnClickListener {
                 onInteractionListener.onLike(post)
             }

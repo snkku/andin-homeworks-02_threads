@@ -20,21 +20,7 @@
         android:id="@+id/toolsTop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:barrierDirection="top"
-        app:constraint_referenced_ids="content,save" />
-
-    <androidx.constraintlayout.widget.Group
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="visible"
-        app:constraint_referenced_ids="content,save" />
-
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/vg_edit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:constraint_referenced_ids="cancel_button,editIcon,editTextLabel,editTextPreview,split_line" />
+        app:barrierDirection="top" />
 
     <ImageView
         android:id="@+id/editIcon"
@@ -43,7 +29,6 @@
         android:paddingHorizontal="@dimen/icon_text_padding"
         android:paddingVertical="@dimen/icon_text_padding"
         android:src="@drawable/edit"
-        app:layout_constraintBottom_toTopOf="@id/content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/toolsTop" />
 
@@ -57,43 +42,6 @@
         app:layout_constraintStart_toEndOf="@id/editIcon"
         app:layout_constraintTop_toTopOf="@id/editIcon" />
 
-    <TextView
-        android:id="@+id/editTextLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingLeft="@dimen/icon_text_padding"
-        android:paddingTop="@dimen/icon_text_padding"
-        android:text="@string/editing"
-        android:textSize="16dp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@id/split_line"
-        app:layout_constraintTop_toTopOf="@id/editIcon" />
-
-    <TextView
-        android:id="@+id/editTextPreview"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:paddingLeft="@dimen/icon_text_padding"
-        android:singleLine="true"
-        android:text="test kjasd kjasdkj aksdj aksdj aksdj aksjd aksjd aksjd ..."
-        app:layout_constraintBottom_toTopOf="@id/content"
-        app:layout_constraintEnd_toStartOf="@id/cancel_button"
-        app:layout_constraintStart_toEndOf="@id/split_line"
-        app:layout_constraintTop_toBottomOf="@id/editTextLabel"
-        app:layout_constraintVertical_chainStyle="packed" />
-
-    <ImageButton
-        android:id="@+id/cancel_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:paddingVertical="@dimen/icon_text_padding"
-        android:src="@drawable/ic_cancel"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolsTop"
-        />
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add"
         android:contentDescription="@string/editing"
