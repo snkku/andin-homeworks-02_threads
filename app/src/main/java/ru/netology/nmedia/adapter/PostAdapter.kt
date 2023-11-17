@@ -24,13 +24,14 @@ interface onInteractionListener {
     fun onLike(post: Post) {}
     fun onRemove(post: Post) {}
     fun onShare(post: Post) {}
+    fun onPlayVideo(post: Post) {}
     fun onEdit(post: Post) {}
 }
 
 class PostAdapter(private val onInteractionListener: onInteractionListener) :
     ListAdapter<Post, PostViewHolder>(PostDiffCallback) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
-        val binding = PostCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ru.netology.nmedia.databinding.PostCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return PostViewHolder(binding, onInteractionListener)
     }
 
@@ -68,14 +69,7 @@ class PostViewHolder(
                         .load(String.format("https://img.youtube.com/vi/%s/0.jpg", id))
                         .into(videoPreviewImage)
                     Log.d("IMG", image.toString())
-/*
-                    image.getSize { width, height ->
-                        with(videoPreviewImage){
-                            layoutParams.width = width
-                            layoutParams.height = height
-                        }
-                    }
-  */
+                    videoGroup.visibility = View.VISIBLE
                 } catch (e: Exception) {
                     Log.d("IMAGE", "Image get error: " + e.printStackTrace())
                 }
@@ -88,6 +82,9 @@ class PostViewHolder(
             }
             imShare.setOnClickListener {
                 onInteractionListener.onShare(post)
+            }
+            playVideoButton.setOnClickListener {
+                onInteractionListener.onPlayVideo(post)
             }
 
             menu.setOnClickListener {

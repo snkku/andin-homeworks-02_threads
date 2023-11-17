@@ -1,6 +1,8 @@
 package ru.netology.nmedia.activity
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -40,6 +42,18 @@ class MainActivity : AppCompatActivity() {
                 val chooser = Intent.createChooser(intent, getString(R.string.app_name))
                 startActivity(intent)
                 viewModel.share(post.id)
+            }
+
+            override fun onPlayVideo(post: Post) {
+                val id = post.videoURL?.let { Regex("\\.*\\?v=([\\w\\-]+)(\\S+)?\$").findAll(it).map { it.groupValues[1] }.joinToString() }
+                val appIntent = Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:"+id))
+                val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v="+id))
+                val chooser = Intent.createChooser(intent, getString(R.string.app_name))
+                try {
+                    startActivity(appIntent)
+                } catch(ex: ActivityNotFoundException) {
+                    startActivity(webIntent)
+                }
             }
 
             override fun onLike(post: Post) {

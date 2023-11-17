@@ -6,9 +6,7 @@
     android:layout_height="wrap_content">
 
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <androidx.constraintlayout.widget.ConstraintLayout
         style="@style/Theme.NMedia"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -70,10 +68,11 @@
             app:constraint_referenced_ids="published,author,avatar,menu" />
 
         <androidx.constraintlayout.widget.Group
+            android:id="@+id/videoGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="visible"
             app:constraint_referenced_ids="videoPreviewImage,playVideoButton"
+            android:visibility="gone"
             />
 
         <TextView
@@ -101,16 +100,27 @@
             app:layout_constraintBottom_toBottomOf="@id/barrierBottomText"
             tools:src="@sample/netologo"
             />
+
         <ImageButton
-            app:layout_constraintTop_toTopOf="@id/videoPreviewImage"
-            android:layout_gravity="center"
+
             android:id="@+id/playVideoButton"
-            android:layout_width="@dimen/std_icon_size"
+            android:padding="0dp"
+            android:background="@android:color/transparent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/videoPreviewImage"
+            android:layout_alignTop="@id/videoPreviewImage"
+            android:layout_alignRight="@id/videoPreviewImage"
+            android:layout_alignBottom="@id/videoPreviewImage"
+            android:layout_gravity="center"
             android:scaleType="centerInside"
-            android:layout_height="@dimen/std_icon_size"
             android:src="@drawable/baseline_smart_display_24"
-            tools:src="@drawable/baseline_smart_display_24"
-        />
+            app:layout_constraintBottom_toBottomOf="@+id/videoPreviewImage"
+            app:layout_constraintEnd_toEndOf="@+id/videoPreviewImage"
+            app:layout_constraintStart_toStartOf="@+id/videoPreviewImage"
+            app:layout_constraintTop_toBottomOf="@+id/content"
+            tools:src="@drawable/baseline_smart_display_24" />
+
         <androidx.constraintlayout.widget.Barrier
             android:id="@+id/barrierBottomText"
             android:layout_width="wrap_content"
