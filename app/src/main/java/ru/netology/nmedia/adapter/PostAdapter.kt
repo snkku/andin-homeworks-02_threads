@@ -1,25 +1,19 @@
 package ru.netology.nmedia.adapter
 
-import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.PopupMenu
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.annotation.GlideModule
-import com.bumptech.glide.module.AppGlideModule
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.PostCardBinding
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.utils.Shorter
 
-@GlideModule
-class GlideApp : AppGlideModule()
 interface onInteractionListener {
     fun onLike(post: Post) {}
     fun onRemove(post: Post) {}
@@ -31,7 +25,7 @@ interface onInteractionListener {
 class PostAdapter(private val onInteractionListener: onInteractionListener) :
     ListAdapter<Post, PostViewHolder>(PostDiffCallback) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
-        val binding = ru.netology.nmedia.databinding.PostCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = PostCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return PostViewHolder(binding, onInteractionListener)
     }
 
@@ -75,6 +69,8 @@ class PostViewHolder(
                 }
                 Log.d("POST ADAPTER, videoId: ", id)
 //                videoPreviewContent.visibility = View.VISIBLE
+            } else {
+                videoGroup.visibility = View.GONE
             }
 //https://img.youtube.com/vi/<id>>/0.jpg
             imLikes.setOnClickListener {

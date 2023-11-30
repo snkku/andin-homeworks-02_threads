@@ -4,19 +4,14 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.View
-import android.widget.Toast
-import androidx.activity.result.launch
 import androidx.appcompat.app.AppCompatActivity
 import ru.netology.nmedia.databinding.ActivityMainBinding
 import ru.netology.nmedia.viewmodel.PostViewModel
 import androidx.activity.viewModels
-import androidx.core.widget.doOnTextChanged
 import ru.netology.nmedia.R
 import ru.netology.nmedia.adapter.PostAdapter
 import ru.netology.nmedia.adapter.onInteractionListener
 import ru.netology.nmedia.dto.Post
-import ru.netology.nmedia.utils.AndroidUtils
 
 
 class MainActivity : AppCompatActivity() {
@@ -28,7 +23,10 @@ class MainActivity : AppCompatActivity() {
         val binding = ActivityMainBinding.inflate(layoutInflater)
 
         val newPostLauncher = registerForActivityResult(NewPostContract) { text ->
-            text ?: return@registerForActivityResult
+            if (text.isNullOrBlank()) {
+                viewModel.clearEdited()
+                return@registerForActivityResult
+            }
             viewModel.save(text)
         }
 

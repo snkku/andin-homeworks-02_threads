@@ -1,12 +1,12 @@
 package ru.netology.nmedia.viewmodel
 
-import android.net.Uri
+import android.app.Application
 import android.util.Log
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.repository.PostRepository
-import ru.netology.nmedia.repository.PostRepositoryInMemory
+import ru.netology.nmedia.repository.PostRepositoryFileImpl
 import java.util.regex.Pattern.compile
 
 private val empty = Post(
@@ -20,8 +20,8 @@ private val empty = Post(
     likedByMe = false
 )
 
-class PostViewModel : ViewModel() {
-    private val repository: PostRepository = PostRepositoryInMemory()
+class PostViewModel(application: Application) : AndroidViewModel(application) {
+    private val repository: PostRepository = PostRepositoryFileImpl(application)
     private val youtubeRegexp = compile("^((?:https?:)?\\/\\/)?((?:www|m)\\.)?((?:youtube(-nocookie)?\\.com|youtu.be))(\\/(?:[\\w\\-]+\\?v=|embed\\/|live\\/|v\\/)?)([\\w\\-]+)(\\S+)?\$")
     val data = repository.getAll()
     val edited = MutableLiveData(empty)
@@ -39,7 +39,7 @@ class PostViewModel : ViewModel() {
         // parse for youtube url and remove from main text, store in videoURL
         edited.value?.let {
             var videoURL: String? = null
-            var outputText = text
+            var outputText: String
             text.split(" ", "\n", "\r").map { text ->
                 if (youtubeRegexp.matcher(text).matches()) {
                     Log.d("REGEXP:", "Youtube match " + youtubeRegexp.toRegex().find(text)?.value)
