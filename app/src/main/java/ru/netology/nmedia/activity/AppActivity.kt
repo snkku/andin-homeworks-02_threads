@@ -3,14 +3,17 @@ package ru.netology.nmedia.activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.activity.viewModels
 import com.google.android.material.snackbar.Snackbar
 import ru.netology.nmedia.R
-import ru.netology.nmedia.databinding.ActivityIntentHandlerBinding
+import ru.netology.nmedia.databinding.ActivityAppBinding
+import ru.netology.nmedia.viewmodel.PostViewModel
 
-class IntentHandlerActivity : AppCompatActivity() {
+class AppActivity : AppCompatActivity(R.layout.fragment_feed) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding = ActivityIntentHandlerBinding.inflate(layoutInflater)
+        val viewModel: PostViewModel by viewModels()
+        val binding = ActivityAppBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         intent?.let {

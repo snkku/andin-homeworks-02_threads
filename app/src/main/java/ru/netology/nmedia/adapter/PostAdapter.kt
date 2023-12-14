@@ -20,6 +20,7 @@ interface onInteractionListener {
     fun onShare(post: Post) {}
     fun onPlayVideo(post: Post) {}
     fun onEdit(post: Post) {}
+    fun openSingle(post: Post) {}
 }
 
 class PostAdapter(private val onInteractionListener: onInteractionListener) :
@@ -43,6 +44,10 @@ class PostViewHolder(
     fun bind(post: Post) {
         val shorter = Shorter()
         binding.apply {
+            postCard.setOnClickListener {
+                Log.d("BINDPOST", "bind: post click")
+                onInteractionListener.openSingle(post)
+            }
             author.text = post.author
             published.text = post.published
             content.text = post.content
@@ -82,7 +87,6 @@ class PostViewHolder(
             playVideoButton.setOnClickListener {
                 onInteractionListener.onPlayVideo(post)
             }
-
             menu.setOnClickListener {
                 PopupMenu(it.context, it).apply {
                     inflate(R.menu.options_post)

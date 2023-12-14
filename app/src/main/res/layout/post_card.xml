@@ -10,6 +10,7 @@
         style="@style/Theme.NMedia"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/postCard"
         android:padding="@dimen/standard_padding">
 
         <ImageView

@@ -25,6 +25,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     private val youtubeRegexp = compile("^((?:https?:)?\\/\\/)?((?:www|m)\\.)?((?:youtube(-nocookie)?\\.com|youtu.be))(\\/(?:[\\w\\-]+\\?v=|embed\\/|live\\/|v\\/)?)([\\w\\-]+)(\\S+)?\$")
     val data = repository.getAll()
     val edited = MutableLiveData(empty)
+    var filteredId: Long = 0
     fun like(id: Long) = repository.like(id)
     fun share(id: Long) = repository.share(id)
     fun remove(id: Long) = repository.remove(id)
@@ -32,6 +33,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     fun edit(post: Post) {
         edited.value = post
     }
+
     fun clearEdited() {
         edited.value = empty
     }

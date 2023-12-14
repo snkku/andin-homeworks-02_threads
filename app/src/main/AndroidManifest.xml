@@ -16,26 +16,17 @@
         tools:targetApi="31">
 
         <activity
-            android:name=".activity.NewPostActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize"/>
-        <activity
-            android:name=".activity.MainActivity"
+            android:name=".activity.AppActivity"
+            android:windowSoftInputMode="stateVisible|adjustResize"
             android:exported="true">
+            <nav-graph android:value="@navigation/nav_main"/>
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name=".activity.IntentHandlerActivity"
-            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
-
                 <category android:name="android.intent.category.DEFAULT" />
-
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
