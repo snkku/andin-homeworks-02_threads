@@ -7,10 +7,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.viewModels
 import androidx.core.os.bundleOf
 import ru.netology.nmedia.viewmodel.PostViewModel
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
@@ -28,7 +28,7 @@ class FeedFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val viewModel: PostViewModel by requireActivity().viewModels()
+        val viewModel: PostViewModel by activityViewModels()
         setFragmentResultListener("newText") { _, bundle ->
             val text = bundle.getString("text")
             if (text.isNullOrBlank())
