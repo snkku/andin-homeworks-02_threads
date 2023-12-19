@@ -21,6 +21,7 @@ interface onInteractionListener {
     fun onPlayVideo(post: Post) {}
     fun onEdit(post: Post) {}
     fun openSingle(post: Post) {}
+    fun incView(post: Post) {}
 }
 
 class PostAdapter(private val onInteractionListener: onInteractionListener) :

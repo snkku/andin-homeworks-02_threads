@@ -82,4 +82,8 @@ class PostRepositoryFileImpl(
         data.value = posts
         Log.d("POSTS", posts.toString())
     }
+
+    override fun view(id: Long) {
+        TODO("Not yet implemented")
+    }
 }

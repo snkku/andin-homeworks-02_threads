@@ -80,8 +80,13 @@ class FeedFragment : Fragment() {
 
             override fun openSingle(post: Post) {
                 setFragmentResult("singlePost", bundleOf("post_id" to post.id))
+                viewModel.incView(post.id)
                 findNavController().navigate(R.id.action_single_post)
 
+            }
+
+            override fun incView(post: Post) {
+                viewModel.incView(post.id)
             }
 
         }
