@@ -14,7 +14,7 @@ private val empty = Post(
     id = 0,
     author = "Me",
     content = "",
-    published = "now",
+    published = "",
     likes = 0,
     shared = 0,
     viewed = 0,
@@ -23,7 +23,7 @@ private val empty = Post(
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: PostRepository = PostRepositorySQLiteImpl(
-        AppDb.getInstance(application).postDao
+        AppDb.getInstance(application).postDao()
     )
     private val youtubeRegexp = compile("^((?:https?:)?\\/\\/)?((?:www|m)\\.)?((?:youtube(-nocookie)?\\.com|youtu.be))(\\/(?:[\\w\\-]+\\?v=|embed\\/|live\\/|v\\/)?)([\\w\\-]+)(\\S+)?\$")
     val data = repository.getAll()
