@@ -45,3 +45,8 @@ local.*
 !**/src/main/**
 !**/src/test/**
 /.idea/
+# Google Services (e.g. APIs or Firebase)
+google-services.json
+
+# Android Profiling
+*.hprof
