@@ -11,4 +11,8 @@
     <string name="menu_edit">Edit</string>
     <string name="menu_remove">Remove</string>
     <string name="error_empty_content">Empty post text</string>
+    <string name="channel_remote_name">NMedia Proj</string>
+    <string name="channel_remote_description">NMedia application</string>
+    <string name="notification_user_liked">%1$s kust liked post %2$s</string>
+    <string name="notification_new_post">%1$s just wrote new post</string>
 </resources>

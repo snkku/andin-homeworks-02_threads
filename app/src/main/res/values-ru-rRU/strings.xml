@@ -12,4 +12,8 @@
     <string name="menu_edit">Изменить</string>
     <string name="menu_remove">Удалить</string>
     <string name="error_empty_content">Текст поста пустой</string>
+    <string name="channel_remote_name">NMedia Proj</string>
+    <string name="channel_remote_description">NMedia application</string>
+    <string name="notification_user_liked">%1$s поставил лайк посту %2$s</string>
+    <string name="notification_new_post">%1$s только что написал новый пост</string>
 </resources>

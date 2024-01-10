@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="channel_remote_name">NMedia Proj</string>
+    <string name="channel_remote_description">NMedia application</string>
+    <string name="notification_user_liked">%1$s поставил лайк посту %2$s</string>
+</resources>
