@@ -1,6 +1,9 @@
 package ru.netology.nmedia.activity
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
@@ -35,6 +38,7 @@ class AppActivity : AppCompatActivity(R.layout.fragment_feed) {
             }
         }
         checkGoogleApiAvailability()
+        requestNotificationPermission()
     }
     private fun checkGoogleApiAvailability() {
         with(GoogleApiAvailability.getInstance()) {
@@ -50,6 +54,14 @@ class AppActivity : AppCompatActivity(R.layout.fragment_feed) {
             }
             Toast.makeText(this@AppActivity, "Google API unavail", Toast.LENGTH_LONG).show()
         }
-
+    }
+    private fun requestNotificationPermission()
+    {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
+            return
+        val permission = Manifest.permission.POST_NOTIFICATIONS
+        if (checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED)
+            return
+        requestPermissions(arrayOf(permission), 1)
     }
 }
