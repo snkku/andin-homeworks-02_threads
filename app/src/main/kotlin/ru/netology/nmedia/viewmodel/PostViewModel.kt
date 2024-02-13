@@ -70,15 +70,11 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     fun remove(id: Long) {
         thread {
             repository.remove(id)
-            repository.getAll()
         }
     }
 
     fun edit(post: Post) {
-        thread {
-            edited.value = post
-            repository.getAll()
-        }
+        edited.value = post
     }
 
     fun incView(id: Long)
