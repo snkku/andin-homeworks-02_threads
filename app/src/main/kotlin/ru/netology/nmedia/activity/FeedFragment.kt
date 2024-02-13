@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import ru.netology.nmedia.viewmodel.PostViewModel
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -19,6 +20,7 @@ import ru.netology.nmedia.adapter.PostAdapter
 import ru.netology.nmedia.adapter.onInteractionListener
 import ru.netology.nmedia.databinding.FragmentFeedBinding
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.model.FeedState
 
 
 class FeedFragment : Fragment() {
@@ -33,8 +35,12 @@ class FeedFragment : Fragment() {
             val text = bundle.getString("text")
             if (text.isNullOrBlank())
                 viewModel.clearEdited()
-            else
+            else {
+                viewModel.saveState.observe(viewLifecycleOwner) {
+                    viewModel.load()
+                }
                 viewModel.save(text)
+            }
         }
 
         val binding = FragmentFeedBinding.inflate(inflater, container, false)
@@ -65,7 +71,7 @@ class FeedFragment : Fragment() {
             }
 
             override fun onLike(post: Post) {
-                viewModel.like(post.id)
+                viewModel.like(post.id, post.likedByMe)
             }
 
             override fun onRemove(post: Post) {
@@ -94,12 +100,17 @@ class FeedFragment : Fragment() {
         val adapter = PostAdapter(interaction)
         binding.recycler.adapter = adapter
 
-        viewModel.data.observe(viewLifecycleOwner) { posts ->
+        viewModel.data.observe(viewLifecycleOwner) { state: FeedState ->
             val curSize = adapter.currentList.size
-            adapter.submitList(posts) {
-                if (curSize < posts.size)
+            adapter.submitList(state.posts)
+            {
+                if (curSize < state.posts.size)
                     binding.recycler.smoothScrollToPosition(0)
             }
+            binding.progress.isVisible = state.loading
+            binding.swiperefresh.isRefreshing = state.loading
+            binding.errorGroup.isVisible = state.error
+            binding.emptyText.isVisible = state.empty
         }
         viewModel.edited.observe(viewLifecycleOwner) { post ->
 
@@ -109,6 +120,12 @@ class FeedFragment : Fragment() {
             findNavController().navigate(R.id.action_new_post)
         }
 
+        binding.retry.setOnClickListener {
+            viewModel.load()
+        }
+        binding.swiperefresh.setOnRefreshListener {
+            viewModel.load()
+        }
           return binding.root
     }
 }

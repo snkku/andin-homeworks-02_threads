@@ -19,6 +19,7 @@ import ru.netology.nmedia.adapter.PostAdapter
 import ru.netology.nmedia.adapter.onInteractionListener
 import ru.netology.nmedia.databinding.FragmentSinglePostBinding
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.model.FeedState
 
 
 class SinglePostFragment : Fragment() {
@@ -67,7 +68,7 @@ class SinglePostFragment : Fragment() {
             }
 
             override fun onLike(post: Post) {
-                viewModel.like(post.id)
+                viewModel.like(post.id, post.likedByMe)
             }
 
             override fun onRemove(post: Post) {
@@ -85,8 +86,8 @@ class SinglePostFragment : Fragment() {
         val adapter = PostAdapter(interaction)
         binding.recycler.adapter = adapter
 
-        viewModel.data.observe(viewLifecycleOwner) { posts ->
-            adapter.submitList(posts.filter { it.id == viewModel.filteredId })
+        viewModel.data.observe(viewLifecycleOwner) { state:FeedState ->
+            adapter.submitList(state.posts.filter { it.id == viewModel.filteredId })
         }
         viewModel.edited.observe(viewLifecycleOwner) { post ->
 

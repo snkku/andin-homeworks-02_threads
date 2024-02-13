@@ -15,4 +15,7 @@
     <string name="channel_remote_description">NMedia application</string>
     <string name="notification_user_liked">%1$s kust liked post %2$s</string>
     <string name="notification_new_post">%1$s just wrote new post</string>
+    <string name="retry">Retry</string>
+    <string name="something_goes_wrong">Shit happened</string>
+    <string name="no_posts">No posts</string>
 </resources>

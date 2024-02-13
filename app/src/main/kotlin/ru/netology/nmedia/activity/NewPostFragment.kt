@@ -35,17 +35,17 @@ class NewPostFragment : Fragment() {
                 binding.content.setText(text.toString())
         }
 
-            requireActivity().onBackPressedDispatcher.addCallback(
-                viewLifecycleOwner,
-                object : OnBackPressedCallback(true) {
-                    override fun handleOnBackPressed() {
-                        Log.d("NPF", "handleOnBackPressed: back pressed")
-                        if (!editMode)
-                            viewModel.draftContent = binding.content.text.toString()
-                        findNavController().navigateUp()
-                    }
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    Log.d("NPF", "handleOnBackPressed: back pressed")
+                    if (!editMode)
+                        viewModel.draftContent = binding.content.text.toString()
+                    findNavController().navigateUp()
                 }
-            )
+            }
+        )
 
         binding.ok.setOnClickListener {
             setFragmentResult("newText", bundleOf("text" to binding.content.text.toString()))

@@ -3,12 +3,16 @@ package ru.netology.nmedia.viewmodel
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import ru.netology.nmedia.db.AppDb
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.model.FeedState
 import ru.netology.nmedia.repository.PostRepository
-import ru.netology.nmedia.repository.PostRepositorySQLiteImpl
+import ru.netology.nmedia.repository.PostRepositoryNet
+import ru.netology.nmedia.utils.SingleLiveEvent
+import java.lang.Exception
 import java.util.regex.Pattern.compile
+import kotlin.concurrent.thread
 
 private val empty = Post(
     id = 0,
@@ -22,20 +26,59 @@ private val empty = Post(
 )
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository: PostRepository = PostRepositorySQLiteImpl(
-        AppDb.getInstance(application).postDao()
-    )
+    private val repository: PostRepository = PostRepositoryNet()
     private val youtubeRegexp = compile("^((?:https?:)?\\/\\/)?((?:www|m)\\.)?((?:youtube(-nocookie)?\\.com|youtu.be))(\\/(?:[\\w\\-]+\\?v=|embed\\/|live\\/|v\\/)?)([\\w\\-]+)(\\S+)?\$")
-    val data = repository.getAll()
+    private val _state = MutableLiveData(FeedState())
+    private val _saveState = SingleLiveEvent<Unit>()
+    val data : LiveData<FeedState>
+        get() = _state
+
+    val saveState: LiveData<Unit>
+        get() = _saveState
+    init {
+        load()
+    }
+    fun load() {
+        thread {
+            _state.postValue(FeedState(loading = true))
+            try {
+                val posts = repository.getAll()
+                _state.postValue(FeedState(posts = posts, empty = posts.isEmpty()))
+            } catch (e: Exception) {
+                Log.d("LOAD", "load: ${e.message}")
+                _state.postValue(FeedState(error = true))
+            }
+        }
+
+    }
     val edited = MutableLiveData(empty)
     var filteredId: Long = 0
     var draftContent: String? = null
-    fun like(id: Long) = repository.like(id)
-    fun share(id: Long) = repository.share(id)
-    fun remove(id: Long) = repository.remove(id)
+    fun like(id: Long, likedByMe: Boolean) {
+        thread {
+            if (likedByMe)
+                repository.unlike(id)
+            else
+                repository.like(id)
+        }
+    }
+    fun share(id: Long) {
+        thread {
+            repository.share(id)
+        }
+    }
+    fun remove(id: Long) {
+        thread {
+            repository.remove(id)
+            repository.getAll()
+        }
+    }
 
     fun edit(post: Post) {
-        edited.value = post
+        thread {
+            edited.value = post
+            repository.getAll()
+        }
     }
 
     fun incView(id: Long)
@@ -59,10 +102,16 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             }
             if (!videoURL.isNullOrBlank()) {
                 outputText = text.replace(videoURL!!, "")
-                repository.save(it.copy(content = outputText, videoURL = videoURL))
+                thread {
+                    repository.save(it.copy(content = outputText, videoURL = videoURL))
+                    _saveState.postValue(Unit)
+                }
             } else {
                 outputText = text
-                repository.save(it.copy(content = outputText))
+                thread {
+                    repository.save(it.copy(content = outputText))
+                    _saveState.postValue(Unit)
+                }
             }
             edited.value = empty
         }
