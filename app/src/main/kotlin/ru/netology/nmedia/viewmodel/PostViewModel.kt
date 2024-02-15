@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.room.util.copy
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.model.FeedState
 import ru.netology.nmedia.repository.PostRepository
@@ -54,22 +55,37 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     val edited = MutableLiveData(empty)
     var filteredId: Long = 0
     var draftContent: String? = null
+
     fun like(id: Long, likedByMe: Boolean) {
         thread {
+            var responseOk: Boolean
             if (likedByMe)
-                repository.unlike(id)
+                responseOk = repository.unlike(id)
             else
-                repository.like(id)
+                responseOk = repository.like(id)
+            Log.d("LIKE", "like response: ${responseOk.toString()}")
+            if (responseOk)
+                _state.postValue(FeedState(posts = _state.value?.posts.orEmpty().map {
+                    if (it.id == id) it.copy(likedByMe = !likedByMe, likes = (if (!likedByMe) it.likes+1 else it.likes-1)) else it
+                }))
         }
     }
     fun share(id: Long) {
         thread {
-            repository.share(id)
+            val responseOk = repository.share(id)
+            if (responseOk)
+                _state.postValue(FeedState(posts = _state.value?.posts.orEmpty().map {
+                    if (it.id == id) it.copy(shared = it.shared+1) else it
+                }))
         }
     }
     fun remove(id: Long) {
         thread {
-            repository.remove(id)
+            val responseOk = repository.remove(id)
+            if (responseOk)
+                _state.postValue(FeedState(posts = _state.value?.posts.orEmpty().filter {
+                    it.id !== id
+                }))
         }
     }
 

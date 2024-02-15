@@ -13,6 +13,10 @@ import java.util.concurrent.TimeUnit
 
 class PostRepositoryNet : PostRepository {
 
+    data class BooleanResponse (
+        val status: Int,
+        val error: String?
+    )
     private val client: OkHttpClient = OkHttpClient.Builder()
         .connectTimeout(30, TimeUnit.SECONDS)
         .build()
@@ -40,57 +44,67 @@ class PostRepositoryNet : PostRepository {
             }
     }
 
-    override fun like(id: Long) {
+    override fun like(id: Long): Boolean {
         val request: Request = Request.Builder()
             .url("${BASE_URL}/api/like/${id}")
             .build()
 
-        client.newCall(request)
+        val response = client.newCall(request)
             .execute()
-            .close()
+            .let { it.body?.string() ?: throw RuntimeException("body is null") }
+            .let { gson.fromJson(it, BooleanResponse::class.java)}
+        return response.status >= 0
     }
 
-    override fun unlike(id: Long) {
+    override fun unlike(id: Long): Boolean {
         val request: Request = Request.Builder()
             .delete()
             .url("${BASE_URL}/api/like/${id}")
             .build()
 
-        client.newCall(request)
+        val response = client.newCall(request)
             .execute()
-            .close()
+            .let { it.body?.string() ?: throw RuntimeException("body is null") }
+            .let { gson.fromJson(it, BooleanResponse::class.java)}
+        return response.status >= 0
     }
 
-    override fun share(id: Long) {
+    override fun share(id: Long): Boolean {
         val request: Request = Request.Builder()
             .url("${BASE_URL}/api/share/${id}")
             .build()
 
-        client.newCall(request)
+        val response = client.newCall(request)
             .execute()
-            .close()
+            .let { it.body?.string() ?: throw RuntimeException("body is null") }
+            .let { gson.fromJson(it, BooleanResponse::class.java)}
+        return response.status >= 0
     }
 
-    override fun remove(id: Long) {
+    override fun remove(id: Long): Boolean {
         val request: Request = Request.Builder()
             .delete()
             .url("${BASE_URL}/api/posts/${id}")
             .build()
 
-        client.newCall(request)
+        val response = client.newCall(request)
             .execute()
-            .close()
+            .let { it.body?.string() ?: throw RuntimeException("body is null") }
+            .let { gson.fromJson(it, BooleanResponse::class.java)}
+        return response.status >= 0
     }
 
-    override fun save(post: Post) {
+    override fun save(post: Post): Boolean {
         val request: Request = Request.Builder()
             .post(gson.toJson(post).toRequestBody(jsonType))
             .url("${BASE_URL}/api/slow/posts")
             .build()
 
-        client.newCall(request)
+        val response = client.newCall(request)
             .execute()
-            .close()
+            .let { it.body?.string() ?: throw RuntimeException("body is null") }
+            .let { gson.fromJson(it, BooleanResponse::class.java)}
+        return response.status >= 0
     }
 
     override fun view(id: Long) {
