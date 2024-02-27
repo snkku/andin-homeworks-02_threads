@@ -13,6 +13,8 @@ import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.PostCardBinding
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.utils.Shorter
+import ru.netology.nmedia.utils.load
+import ru.netology.nmedia.utils.loadAvatar
 
 interface onInteractionListener {
     fun onLike(post: Post) {}
@@ -60,15 +62,17 @@ class PostViewHolder(
             imLikes.text = shorter.short(post.likes.toDouble())
             imShare.text = shorter.short(post.shared.toDouble())
             //https://www.youtube.com/watch?v=DCRojLC8xWM
+            avatar.loadAvatar(String.format("http://nm.kamensk.ru/avatars/%s", post.avatar))
             if (!post.videoURL.isNullOrBlank())
             {
                 val id = Regex("\\.*\\?v=([\\w\\-]+)(\\S+)?\$").findAll(post.videoURL).map { it.groupValues[1] }.joinToString()
                 try {
-                    val image = Glide.with(binding.root)
-                        .asBitmap()
-                        .load(String.format("https://img.youtube.com/vi/%s/0.jpg", id))
-                        .into(videoPreviewImage)
-                    Log.d("IMG", image.toString())
+//                    val image = Glide.with(binding.root)
+//                        .asBitmap()
+//                        .load(String.format("https://img.youtube.com/vi/%s/0.jpg", id))
+//                        .into(videoPreviewImage)
+                    videoPreviewImage.load(String.format("https://img.youtube.com/vi/%s/0.jpg", id))
+//                    Log.d("IMG", image.toString())
                     videoGroup.visibility = View.VISIBLE
                 } catch (e: Exception) {
                     Log.d("IMAGE", "Image get error: " + e.printStackTrace())
