@@ -6,5 +6,7 @@ data class FeedState(
     val posts: List<Post> = emptyList(),
     val loading: Boolean = false,
     val error: Boolean = false,
+    val errorMessage: String? = null,
+    val errorIsFatal: Boolean = false,
     val empty: Boolean = false
 )

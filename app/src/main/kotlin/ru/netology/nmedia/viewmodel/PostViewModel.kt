@@ -2,9 +2,12 @@ package ru.netology.nmedia.viewmodel
 
 import android.app.Application
 import android.util.Log
+import android.view.View
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.google.android.material.snackbar.Snackbar
+import ru.netology.nmedia.R
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.model.FeedState
 import ru.netology.nmedia.repository.PostRepository
@@ -41,14 +44,14 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun load() {
-        _state.postValue(FeedState(loading = true))
+        _state.value = FeedState(loading = true)
         repository.getAllAsync(object : PostRepository.GetCallback<List<Post>> {
             override fun onSuccess(posts: List<Post>) {
-                _state.postValue(FeedState(posts = posts, empty = posts.isEmpty()))
+                _state.value = FeedState(posts = posts, empty = posts.isEmpty())
             }
 
             override fun onError(throwable: Throwable) {
-                _state.postValue(FeedState(error = true))
+                _state.value = FeedState(error = true, errorIsFatal = true)
             }
         })
     }
@@ -63,17 +66,18 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             likedByMe,
             object : PostRepository.GetCallback<PostRepositoryNet.BooleanResponse> {
                 override fun onError(throwable: Throwable) {
-                    TODO("Not yet implemented")
+                    Log.d("ERROR", "onError: ${throwable.message}")
+                    _state.value = FeedState(posts = _state.value?.posts.orEmpty(), error = true, errorMessage = throwable.message)
                 }
 
                 override fun onSuccess(response: PostRepositoryNet.BooleanResponse) {
                     if (response.status >= 0)
-                        _state.postValue(FeedState(posts = _state.value?.posts.orEmpty().map {
+                        _state.value = FeedState(posts = _state.value?.posts.orEmpty().map {
                             if (it.id == id) it.copy(
                                 likedByMe = !likedByMe,
                                 likes = (if (!likedByMe) it.likes + 1 else it.likes - 1)
                             ) else it
-                        }))
+                        })
                 }
             })
     }
@@ -87,9 +91,9 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
                 override fun onSuccess(response: PostRepositoryNet.BooleanResponse) {
                     if (response.status >= 0)
-                        _state.postValue(FeedState(posts = _state.value?.posts.orEmpty().map {
+                        _state.value = FeedState(posts = _state.value?.posts.orEmpty().map {
                             if (it.id == id) it.copy(shared = it.shared + 1) else it
-                        }))
+                        })
                 }
             })
     }
@@ -104,10 +108,9 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
                 override fun onSuccess(response: PostRepositoryNet.BooleanResponse) {
                     if (response.status >= 0)
-                        _state.postValue(FeedState(posts = _state.value?.posts.orEmpty().filter {
+                        _state.value =  FeedState(posts = _state.value?.posts.orEmpty().filter {
                             it.id !== id
-                        }))
-
+                        })
                 }
             })
     }

@@ -15,6 +15,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
+import okhttp3.internal.wait
 import ru.netology.nmedia.R
 import ru.netology.nmedia.adapter.PostAdapter
 import ru.netology.nmedia.adapter.onInteractionListener
@@ -107,10 +109,19 @@ class FeedFragment : Fragment() {
                 if (curSize < state.posts.size)
                     binding.recycler.smoothScrollToPosition(0)
             }
+            binding.swiperefresh.isVisible = !state.loading
             binding.progress.isVisible = state.loading
             binding.swiperefresh.isRefreshing = state.loading
-            binding.errorGroup.isVisible = state.error
             binding.emptyText.isVisible = state.empty
+            if (state.error)
+            {
+                if (state.errorIsFatal)
+                    binding.errorGroup.isVisible = state.errorIsFatal
+                else
+                    Snackbar.make(binding.root, "Shit happened!\n${state.errorMessage}", Snackbar.LENGTH_SHORT)
+                        .show()
+            } else
+                binding.errorGroup.isVisible = false
         }
         viewModel.edited.observe(viewLifecycleOwner) { post ->
 
