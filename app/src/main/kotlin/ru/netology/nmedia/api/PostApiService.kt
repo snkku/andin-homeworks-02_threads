@@ -1,13 +1,14 @@
 package ru.netology.nmedia.api
 
 import okhttp3.OkHttpClient
+import okhttp3.internal.http2.ErrorCode
 import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Call
+import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
 import retrofit2.http.*
 import ru.netology.nmedia.BuildConfig
+import ru.netology.nmedia.dto.Author
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.repository.PostRepositoryNet
 import java.util.concurrent.TimeUnit
@@ -30,29 +31,33 @@ private val retrofit = Retrofit.Builder()
     .addConverterFactory(GsonConverterFactory.create())
     .client(client)
     .build()
-interface PostApi {
+
+interface PostApiService {
     @GET("posts")
-    fun getAll(): Call<List<Post>>
+    suspend fun getAll(): List<Post>
 
     @POST("post")
-    fun save(@Body post: Post): Call<PostRepositoryNet.BooleanResponse>
+    suspend fun save(@Body post: Post): PostRepositoryNet.BooleanResponse
 
     @DELETE("post/{id}")
-    fun remove(@Path("id") id:Long): Call<PostRepositoryNet.BooleanResponse>
+    suspend fun remove(@Path("id") id:Long): PostRepositoryNet.BooleanResponse
 
     @GET("like/{id}")
-    fun like (@Path("id") id: Long): Call<PostRepositoryNet.BooleanResponse>
+    suspend fun like (@Path("id") id: Long): PostRepositoryNet.BooleanResponse
 
     @DELETE("like/{id}")
-    fun unlike (@Path("id") id: Long): Call<PostRepositoryNet.BooleanResponse>
+    suspend fun unlike (@Path("id") id: Long): PostRepositoryNet.BooleanResponse
 
     @GET("share/{id}")
-    fun share (@Path("id") id: Long): Call<PostRepositoryNet.BooleanResponse>
+    suspend fun share (@Path("id") id: Long): PostRepositoryNet.BooleanResponse
+
+    @GET("author/{id}")
+    suspend fun getAuthorById(@Path("id") id: Long): Author
 
 }
 
-object PostApiService {
-    val service: PostApi by lazy {
-        retrofit.create()
+object PostApi {
+    val service: PostApiService by lazy {
+        retrofit.create(PostApiService::class.java)
     }
 }

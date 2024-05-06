@@ -10,20 +10,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
-import androidx.core.view.isVisible
 import ru.netology.nmedia.viewmodel.PostViewModel
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
-import com.bumptech.glide.load.engine.Resource
 import com.google.android.material.snackbar.Snackbar
 import ru.netology.nmedia.R
 import ru.netology.nmedia.adapter.PostAdapter
 import ru.netology.nmedia.adapter.onInteractionListener
 import ru.netology.nmedia.databinding.FragmentSinglePostBinding
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.model.Feed
 import ru.netology.nmedia.model.FeedState
 
 private const val TAG = "SPF"
@@ -96,8 +95,11 @@ class SinglePostFragment : Fragment() {
         val adapter = PostAdapter(interaction)
         binding.recycler.adapter = adapter
 
-        viewModel.data.observe(viewLifecycleOwner) { state: FeedState ->
-            adapter.submitList(state.posts.filter { it.id == viewModel.filteredId })
+        viewModel.data.observe(viewLifecycleOwner) { feed: Feed ->
+            adapter.submitList(feed.posts.filter { it.id == viewModel.filteredId })
+        }
+
+        viewModel.state.observe(viewLifecycleOwner) { state: FeedState ->
             if (state.error) {
                 val snackbar = Snackbar.make(
                     binding.root,
@@ -109,6 +111,7 @@ class SinglePostFragment : Fragment() {
                 snackbar.show()
             }
         }
+
         viewModel.edited.observe(viewLifecycleOwner) { post ->
             Log.d(TAG, "onCreateView: edited?")
         }

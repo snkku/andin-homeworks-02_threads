@@ -10,7 +10,9 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import ru.netology.nmedia.R
+import ru.netology.nmedia.api.PostApi
 import ru.netology.nmedia.databinding.PostCardBinding
+import ru.netology.nmedia.dto.Author
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.utils.Shorter
 import ru.netology.nmedia.utils.load
@@ -51,7 +53,8 @@ class PostViewHolder(
                 Log.d("BINDPOST", "bind: post click")
                 onInteractionListener.openSingle(post)
             }
-            author.text = post.author
+
+            author.text = post.author.name
             published.text = post.published
             content.text = post.content
             viewedCountText.text = shorter.short(post.viewed.toDouble())
@@ -62,7 +65,7 @@ class PostViewHolder(
             imLikes.text = shorter.short(post.likes.toDouble())
             imShare.text = shorter.short(post.shared.toDouble())
             //https://www.youtube.com/watch?v=DCRojLC8xWM
-            avatar.loadAvatar(String.format("http://nm.kamensk.ru/avatars/%s", post.avatar))
+            avatar.loadAvatar(String.format("http://nm.kamensk.ru/avatars/%s", post.author.avatar))
             if (!post.videoURL.isNullOrBlank())
             {
                 val id = Regex("\\.*\\?v=([\\w\\-]+)(\\S+)?\$").findAll(post.videoURL).map { it.groupValues[1] }.joinToString()

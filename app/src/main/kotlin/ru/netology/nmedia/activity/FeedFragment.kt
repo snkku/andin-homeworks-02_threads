@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +23,7 @@ import ru.netology.nmedia.adapter.PostAdapter
 import ru.netology.nmedia.adapter.onInteractionListener
 import ru.netology.nmedia.databinding.FragmentFeedBinding
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.model.Feed
 import ru.netology.nmedia.model.FeedState
 
 
@@ -102,17 +104,21 @@ class FeedFragment : Fragment() {
         val adapter = PostAdapter(interaction)
         binding.recycler.adapter = adapter
 
-        viewModel.data.observe(viewLifecycleOwner) { state: FeedState ->
+        viewModel.data.observe(viewLifecycleOwner) { data: Feed ->
             val curSize = adapter.currentList.size
-            adapter.submitList(state.posts)
+            adapter.submitList(data.posts)
             {
-                if (curSize < state.posts.size)
+                if (curSize < data.posts.size)
                     binding.recycler.smoothScrollToPosition(0)
             }
+            binding.emptyText.isVisible = data.empty
+        }
+
+        viewModel.state.observe(viewLifecycleOwner) { state: FeedState ->
+            Log.d("STATE CHANGE", "onCreateView: ${state.toString()}")
             binding.swiperefresh.isVisible = !state.loading
             binding.progress.isVisible = state.loading
             binding.swiperefresh.isRefreshing = state.loading
-            binding.emptyText.isVisible = state.empty
             if (state.error)
             {
                 if (state.errorIsFatal)
@@ -123,6 +129,7 @@ class FeedFragment : Fragment() {
             } else
                 binding.errorGroup.isVisible = false
         }
+
         viewModel.edited.observe(viewLifecycleOwner) { post ->
 
         }
