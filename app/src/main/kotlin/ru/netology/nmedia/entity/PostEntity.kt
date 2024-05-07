@@ -24,11 +24,28 @@ data class PostEntity(
     val viewed: Int,
     val likedByMe: Boolean,
     val videoURL: String? = null,
+    val synced: Boolean = true,
+    val removed: Boolean = false,
+    val isNew: Boolean = false
 ) {
     fun toDto() = Post(id, userId, author.toDto(), content, published, likes, shared, viewed, likedByMe, videoURL)
     companion object {
         fun fromDto(dto: Post) =
-            PostEntity(dto.id, dto.userId, AuthorEntity.fromDto(dto.author), dto.content, dto.published, dto.likes, dto.shared, dto.viewed, dto.likedByMe, dto.videoURL)
+            PostEntity(
+                dto.id,
+                dto.userId,
+                AuthorEntity.fromDto(dto.author),
+                dto.content,
+                dto.published,
+                dto.likes,
+                dto.shared,
+                dto.viewed,
+                dto.likedByMe,
+                dto.videoURL,
+                synced = true,
+                removed = false,
+                isNew = dto.id == 0L
+            )
     }
 }
 

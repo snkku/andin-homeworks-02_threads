@@ -121,13 +121,18 @@ class FeedFragment : Fragment() {
             binding.swiperefresh.isRefreshing = state.loading
             if (state.error)
             {
-                if (state.errorIsFatal)
-                    binding.errorGroup.isVisible = state.errorIsFatal
+                if (state.errorIsFatal) {
+                    binding.errorText.text = state.errorMessage
+                    binding.errorGroup.isVisible = true
+                    binding.recycler.isVisible = false
+                }
                 else
                     Snackbar.make(binding.root, "Shit happened!\n${state.errorMessage}", Snackbar.LENGTH_SHORT)
                         .show()
-            } else
+            } else {
                 binding.errorGroup.isVisible = false
+                binding.recycler.isVisible = true
+            }
         }
 
         viewModel.edited.observe(viewLifecycleOwner) { post ->

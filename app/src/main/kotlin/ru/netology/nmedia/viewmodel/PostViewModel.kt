@@ -65,8 +65,12 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                 _state.value = FeedState()
             } catch (e: Exception)
             {
-                _state.value = FeedState(loading = false, error = true, errorIsFatal = true, errorMessage = e.message)
-                e.printStackTrace()
+                _state.value = FeedState(
+                    loading = false,
+                    error = true,
+                    errorIsFatal = false,
+                    errorMessage = "Working offline mode"
+                )
             }
         }
     }

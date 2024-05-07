@@ -11,8 +11,11 @@ import ru.netology.nmedia.entity.PostEntity
 
 @Dao
 interface PostDao {
-    @Query("SELECT * FROM PostEntity ORDER BY id DESC")
+    @Query("SELECT * FROM PostEntity WHERE removed = 0 ORDER BY id DESC")
     fun getAll(): LiveData<List<PostEntity>>
+
+    @Query("SELECT * FROM PostEntity WHERE synced = 0")
+    suspend fun getUnSynced(): List<PostEntity>
 
     @Query("SELECT * FROM PostEntity WHERE id = :id")
     suspend fun getPostById(id: Long): List<PostEntity>
@@ -21,10 +24,16 @@ interface PostDao {
     suspend fun isEmpty(): Boolean
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(post: PostEntity)
+    suspend fun insert(post: PostEntity): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(posts: List<PostEntity>)
+
+    @Query("UPDATE PostEntity SET removed = :removed WHERE id = :id")
+    suspend fun markToRemoveById(id: Long, removed: Boolean)
+
+    @Query("UPDATE PostEntity SET synced = :synced WHERE id = :id")
+    suspend fun markToSync(id: Long, synced: Boolean)
 
     @Update
     suspend fun updatePost(post: PostEntity)

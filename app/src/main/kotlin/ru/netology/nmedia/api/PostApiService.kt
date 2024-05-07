@@ -54,6 +54,9 @@ interface PostApiService {
     @GET("author/{id}")
     suspend fun getAuthorById(@Path("id") id: Long): Author
 
+    @GET("ping")
+    suspend fun ping(): PostRepositoryNet.BooleanResponse
+
 }
 
 object PostApi {
