@@ -156,7 +156,8 @@ class PostRepositoryNet(
                 // update LOCAL post ID to NETWORK ID (IF NEW POST)
                 if (response.newId != null)
                 {
-                    postDao.updatePost(
+                    postDao.removeById(post.id)
+                    postDao.insert(
                         PostEntity.fromDto(
                             post.copy(id = response.newId)
                         )
