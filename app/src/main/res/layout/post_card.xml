@@ -28,6 +28,7 @@
         <TextView
             android:id="@+id/author"
             android:layout_width="0dp"
+            android:textStyle="bold"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/standard_padding"
             android:ellipsize="end"

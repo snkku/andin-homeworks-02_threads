@@ -6,6 +6,7 @@
     </style>
 
     <style name="Theme.NMedia" parent="Base.Theme.NMedia"/>
+
     <style name="Theme.NMedia.LikeButton" parent="Widget.MaterialComponents.Button.TextButton.Icon">
         <item name="iconTint">@color/like_color</item>
         <item name="android:maxWidth">@dimen/std_icon_size</item>

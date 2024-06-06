@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,13 +16,14 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import ru.netology.nmedia.R
 import ru.netology.nmedia.adapter.PostAdapter
 import ru.netology.nmedia.adapter.onInteractionListener
 import ru.netology.nmedia.databinding.FragmentFeedBinding
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.model.Feed
 import ru.netology.nmedia.model.FeedState
-
 
 class FeedFragment : Fragment() {
 
@@ -42,6 +44,7 @@ class FeedFragment : Fragment() {
                 viewModel.save(text)
             }
         }
+
 
         val binding = FragmentFeedBinding.inflate(inflater, container, false)
 
@@ -100,24 +103,52 @@ class FeedFragment : Fragment() {
         val adapter = PostAdapter(interaction)
         binding.recycler.adapter = adapter
 
-        viewModel.data.observe(viewLifecycleOwner) { state: FeedState ->
+        viewModel.data.observe(viewLifecycleOwner) { data: Feed ->
             val curSize = adapter.currentList.size
-            adapter.submitList(state.posts)
-            {
-                if (curSize < state.posts.size)
-                    binding.recycler.smoothScrollToPosition(0)
-            }
+            adapter.submitList(data.posts.filter { it.isHidden == false })
+            if (curSize < data.posts.filter { it.isHidden == false }.size)
+                binding.recycler.smoothScrollToPosition(0)
+            binding.emptyText.isVisible = data.empty
+        }
+
+        viewModel.state.observe(viewLifecycleOwner) { state: FeedState ->
+            Log.d("STATE CHANGE", "onCreateView: ${state.toString()}")
+            binding.swiperefresh.isVisible = !state.loading
             binding.progress.isVisible = state.loading
             binding.swiperefresh.isRefreshing = state.loading
-            binding.errorGroup.isVisible = state.error
-            binding.emptyText.isVisible = state.empty
+            if (state.error)
+            {
+                if (state.errorIsFatal) {
+                    binding.errorText.text = state.errorMessage
+                    binding.errorGroup.isVisible = true
+                    binding.recycler.isVisible = false
+                }
+                else
+                    Snackbar.make(binding.root, "Shit happened!\n${state.errorMessage}", Snackbar.LENGTH_SHORT)
+                        .show()
+            } else {
+                binding.errorGroup.isVisible = false
+                binding.recycler.isVisible = true
+            }
         }
+
         viewModel.edited.observe(viewLifecycleOwner) { post ->
 
         }
 
+        viewModel.newCount.observe(viewLifecycleOwner) { newPostCount ->
+            binding.showNew.isVisible = (newPostCount > 0)
+            binding.showNew.text = binding.showNew.text.toString() + " ($newPostCount)"
+            Log.d("NewCountObserve", "NewPostCount: $newPostCount")
+        }
+
         binding.add.setOnClickListener {
             findNavController().navigate(R.id.action_new_post)
+        }
+
+        binding.showNew.setOnClickListener {
+            viewModel.showNew()
+            binding.showNew.visibility = View.GONE
         }
 
         binding.retry.setOnClickListener {

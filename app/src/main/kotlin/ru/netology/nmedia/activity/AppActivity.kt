@@ -18,6 +18,7 @@ import ru.netology.nmedia.viewmodel.PostViewModel
 class AppActivity : AppCompatActivity(R.layout.fragment_feed) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         val viewModel: PostViewModel by viewModels()
         val binding = ActivityAppBinding.inflate(layoutInflater)
         setContentView(binding.root)
