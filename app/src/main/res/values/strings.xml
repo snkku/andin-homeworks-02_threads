@@ -18,4 +18,5 @@
     <string name="retry">Retry</string>
     <string name="something_goes_wrong">Shit happened</string>
     <string name="no_posts">No posts</string>
+    <string name="show_new_posts">Show new posts</string>
 </resources>

@@ -4,12 +4,14 @@ import okhttp3.OkHttpClient
 import okhttp3.internal.http2.ErrorCode
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.HttpException
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
 import ru.netology.nmedia.BuildConfig
 import ru.netology.nmedia.dto.Author
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.entity.PostEntity
 import ru.netology.nmedia.repository.PostRepositoryNet
 import java.util.concurrent.TimeUnit
 
@@ -35,6 +37,9 @@ private val retrofit = Retrofit.Builder()
 interface PostApiService {
     @GET("posts")
     suspend fun getAll(): List<Post>
+
+    @GET("posts/{id}")
+    suspend fun getNewer(@Path("id") id: Long): Response<List<Post>>
 
     @POST("post")
     suspend fun save(@Body post: Post): PostRepositoryNet.BooleanResponse

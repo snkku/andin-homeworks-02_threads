@@ -1,14 +1,10 @@
 package ru.netology.nmedia.repository
 
-import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
-import android.net.NetworkInfo
+
 import android.util.Log
-import androidx.core.content.ContextCompat.getSystemService
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.map
-import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.*
 import retrofit2.HttpException
 import ru.netology.nmedia.api.PostApi
 import ru.netology.nmedia.dao.AuthorDao
@@ -17,6 +13,8 @@ import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.entity.AuthorEntity
 import ru.netology.nmedia.entity.PostEntity
 import ru.netology.nmedia.entity.toDto
+import ru.netology.nmedia.entity.toEntity
+
 
 
 class PostRepositoryNet(
@@ -30,21 +28,38 @@ class PostRepositoryNet(
         val error: String?
     )
 
-    override val data: LiveData<List<Post>> = postDao.getAll().map {
-        it.map { it ->
-            it.toDto()
+    override val data = postDao.getAll().map(List<PostEntity>::toDto).flowOn(Dispatchers.Default)
+
+    override fun getNewer(): Flow<Int> = flow {
+        while (true) {
+            delay(10_000)
+            val response = PostApi.service.getNewer(postDao.getLastUnreaded())
+            if (!response.isSuccessful)
+                throw Exception("Error ${response.code()}: ${response.message()}")
+
+            val body = response.body()
+                ?: throw Exception("Null body, code: ${response.code()}, message: ${response.message()}")
+            postDao.insert(body.toEntity().map { it.copy(isHidden = true) })
+            emit(postDao.countNew())
+        }
+    }
+        .catch { e -> throw e }
+        .flowOn(Dispatchers.Default)
+
+    override suspend fun showNew() {
+        try {
+            data.first { posts ->
+                posts.filter { it.isHidden == true }.forEach { post ->
+                    Log.d("ShowNew", "Post modified: $post")
+                    postDao.updatePost(PostEntity.fromDto(post.copy(isHidden = false)))
+                }
+                return@first true
+            }
+        } catch (e: Exception) {
+            Log.d("showNew Rep", "showNew: ${e.printStackTrace()}")
         }
     }
 
-    private suspend fun checkInet(): Boolean {
-        try {
-            PostApi.service.ping()
-            return true
-        } catch (e: Exception) {
-            Log.d("checkINET", "checkInet: ${e.toString()}")
-            return false
-        }
-    }
     override suspend fun getAll() {
         try {
             PostApi.service.ping()

@@ -11,4 +11,5 @@ data class Post(
     val viewed: Int,
     val likedByMe: Boolean,
     val videoURL: String? = null,
+    val isHidden: Boolean? = false
 )

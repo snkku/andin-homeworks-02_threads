@@ -10,7 +10,16 @@ import ru.netology.nmedia.dto.Author
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.repository.AuthorRepository
 
-@Entity(foreignKeys = [ForeignKey(entity = AuthorEntity::class, parentColumns = ["authorId"], childColumns = ["userId"], onDelete = ForeignKey.CASCADE, onUpdate = ForeignKey.CASCADE)])
+@Entity(
+    foreignKeys = [ForeignKey(
+        entity = AuthorEntity::class,
+        parentColumns = ["authorId"],
+        childColumns = ["userId"],
+        onDelete = ForeignKey.CASCADE,
+        onUpdate = ForeignKey.CASCADE
+    )],
+    indices = [Index(value = ["isHidden"])]
+)
 data class PostEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long,
@@ -26,9 +35,23 @@ data class PostEntity(
     val videoURL: String? = null,
     val synced: Boolean = true,
     val removed: Boolean = false,
-    val isNew: Boolean = false
+    val isNew: Boolean = false,
+
+    val isHidden: Boolean = false
 ) {
-    fun toDto() = Post(id, userId, author.toDto(), content, published, likes, shared, viewed, likedByMe, videoURL)
+    fun toDto() = Post(
+        id,
+        userId,
+        author.toDto(),
+        content,
+        published,
+        likes,
+        shared,
+        viewed,
+        likedByMe,
+        videoURL,
+        isHidden
+    )
     companion object {
         fun fromDto(dto: Post) =
             PostEntity(
@@ -44,7 +67,8 @@ data class PostEntity(
                 dto.videoURL,
                 synced = true,
                 removed = false,
-                isNew = dto.id == 0L
+                isNew = dto.id == 0L,
+                isHidden = dto.isHidden ?: false
             )
     }
 }

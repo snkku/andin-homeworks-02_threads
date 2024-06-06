@@ -17,7 +17,6 @@ import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
-import okhttp3.internal.wait
 import ru.netology.nmedia.R
 import ru.netology.nmedia.adapter.PostAdapter
 import ru.netology.nmedia.adapter.onInteractionListener
@@ -25,7 +24,6 @@ import ru.netology.nmedia.databinding.FragmentFeedBinding
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.model.Feed
 import ru.netology.nmedia.model.FeedState
-
 
 class FeedFragment : Fragment() {
 
@@ -46,6 +44,7 @@ class FeedFragment : Fragment() {
                 viewModel.save(text)
             }
         }
+
 
         val binding = FragmentFeedBinding.inflate(inflater, container, false)
 
@@ -106,11 +105,9 @@ class FeedFragment : Fragment() {
 
         viewModel.data.observe(viewLifecycleOwner) { data: Feed ->
             val curSize = adapter.currentList.size
-            adapter.submitList(data.posts)
-            {
-                if (curSize < data.posts.size)
-                    binding.recycler.smoothScrollToPosition(0)
-            }
+            adapter.submitList(data.posts.filter { it.isHidden == false })
+            if (curSize < data.posts.filter { it.isHidden == false }.size)
+                binding.recycler.smoothScrollToPosition(0)
             binding.emptyText.isVisible = data.empty
         }
 
@@ -139,8 +136,19 @@ class FeedFragment : Fragment() {
 
         }
 
+        viewModel.newCount.observe(viewLifecycleOwner) { newPostCount ->
+            binding.showNew.isVisible = (newPostCount > 0)
+            binding.showNew.text = binding.showNew.text.toString() + " ($newPostCount)"
+            Log.d("NewCountObserve", "NewPostCount: $newPostCount")
+        }
+
         binding.add.setOnClickListener {
             findNavController().navigate(R.id.action_new_post)
+        }
+
+        binding.showNew.setOnClickListener {
+            viewModel.showNew()
+            binding.showNew.visibility = View.GONE
         }
 
         binding.retry.setOnClickListener {

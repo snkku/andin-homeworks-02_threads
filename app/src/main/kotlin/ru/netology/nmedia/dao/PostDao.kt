@@ -6,13 +6,20 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.entity.PostEntity
 
 @Dao
 interface PostDao {
     @Query("SELECT * FROM PostEntity WHERE removed = 0 ORDER BY id DESC")
-    fun getAll(): LiveData<List<PostEntity>>
+    fun getAll(): Flow<List<PostEntity>>
+
+    @Query("SELECT COUNT(*) FROM PostEntity WHERE isHidden = 1")
+    fun countNew(): Int
+
+    @Query("SELECT max(id) FROM PostEntity WHERE isHidden = 0")
+    fun getLastUnreaded(): Long
 
     @Query("SELECT * FROM PostEntity WHERE synced = 0")
     suspend fun getUnSynced(): List<PostEntity>

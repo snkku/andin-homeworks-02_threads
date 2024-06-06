@@ -5,19 +5,13 @@ import android.util.Log
 import androidx.lifecycle.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import okhttp3.internal.notifyAll
-import retrofit2.HttpException
 import ru.netology.nmedia.db.AppDb
 import ru.netology.nmedia.dto.Author
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.model.Feed
 import ru.netology.nmedia.model.FeedState
-import ru.netology.nmedia.repository.AuthorRepository
-import ru.netology.nmedia.repository.AuthorRepositoryNet
 import ru.netology.nmedia.repository.PostRepository
 import ru.netology.nmedia.repository.PostRepositoryNet
 import ru.netology.nmedia.utils.SingleLiveEvent
@@ -43,11 +37,19 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         compile("^((?:https?:)?\\/\\/)?((?:www|m)\\.)?((?:youtube(-nocookie)?\\.com|youtu.be))(\\/(?:[\\w\\-]+\\?v=|embed\\/|live\\/|v\\/)?)([\\w\\-]+)(\\S+)?\$")
     private val _saveState = SingleLiveEvent<Unit>()
 
-    val data: LiveData<Feed> = repository.data.map(::Feed)
+    val data: LiveData<Feed> = repository.data.map(::Feed).asLiveData(Dispatchers.Default)
 
     private val _state = MutableLiveData<FeedState>()
     val state: LiveData<FeedState>
         get() = _state
+
+    val newCount: LiveData<Int> = data.switchMap {
+        repository.getNewer()
+            .catch { e ->
+                Log.d("SwitchMap exception", "${e.javaClass}: ${e.message}")
+            }
+            .asLiveData(Dispatchers.Default)
+    }
 
 
     val saveState: LiveData<Unit>
@@ -57,7 +59,6 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         load()
     }
     fun load() {
-
         viewModelScope.launch {
             _state.value = FeedState(loading = true)
             try {
@@ -79,6 +80,15 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     var filteredId: Long = 0
     var draftContent: String? = null
 
+    fun showNew() {
+        viewModelScope.launch {
+            try {
+                repository.showNew()
+            } catch (e: Exception) {
+                Log.d("ShowNew FUN Excp", "showNew: ${e.printStackTrace()}")
+            }
+        }
+    }
     fun like(id: Long, likedByMe: Boolean) {
         viewModelScope.launch {
             try {
